@@ -7,4 +7,4 @@ The .html file is auto generated
 Dump your code in a text file
 Define your syntax and colouring in a text file
 Get copiable html file!
-
+![alt text](summary.jpg "Fork it!")
