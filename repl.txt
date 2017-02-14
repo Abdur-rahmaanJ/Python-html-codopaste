@@ -1,0 +1,65 @@
+#include <Wire.h>
+#include <RtcDS3231.h>
+ 
+const byte interruptPin = 13;
+volatile bool alarm = 0;
+ 
+RtcDS3231<TwoWire> rtcObject(Wire);
+ 
+void setup() {
+ 
+  Serial.begin(115200);
+ 
+  pinMode(interruptPin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(interruptPin), handleInterrupt, FALLING);
+ 
+  rtcObject.Begin();
+ 
+  RtcDateTime timestamp = RtcDateTime(__DATE__, __TIME__);
+  rtcObject.SetDateTime(timestamp);
+ 
+  rtcObject.Enable32kHzPin(false);
+  rtcObject.SetSquareWavePin(DS3231SquareWavePin_ModeAlarmOne);
+ 
+  DS3231AlarmOne alarm1(
+    0,
+    0,
+    0,
+    0,
+    DS3231AlarmOneControl_OncePerSecond);
+ 
+  rtcObject.SetAlarmOne(alarm1);
+  rtcObject.LatchAlarmsTriggeredFlags();
+ 
+}
+ 
+void loop() {
+ 
+  if (alarm == true) {
+    handleAlarm();
+  }
+ 
+}
+ 
+void handleAlarm() {
+  alarm = false;
+ 
+  RtcDateTime timestamp = rtcObject.GetDateTime();
+ 
+  Serial.print("time interrupt at: ");
+  char time[10];
+ 
+  sprintf(time, "%d:%d:%d",
+          timestamp.Hour(),
+          timestamp.Minute(),
+          timestamp.Second()
+         );
+  Serial.println(time);
+ 
+  rtcObject.LatchAlarmsTriggeredFlags();
+ 
+}
+ 
+void handleInterrupt() {
+  alarm = true;
+}

@@ -1,0 +1,10 @@
+begin,olivegreen
+#include,green
+const,crimson
+byte,crimson
+ int ,crimson
+float,crimson
+double,crimson
+void,crimson
+ handleInterrupt,olivegreen
+interruptPin,blue
